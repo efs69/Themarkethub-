@@ -1,0 +1,339 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" />
+<title>Sneakylinks — Shop & Book (Single file)</title>
+<style>
+:root{--bg:#0b1220;--card:#0f1724;--muted:#9aa3b8;--text:#eaf0f7;--accent:#22c55e;--accent2:#3b82f6;}
+html,body{height:100%;margin:0;padding:0;overflow-x:hidden;background:var(--bg);color:var(--text);font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;}
+a{color:inherit;text-decoration:none}
+.wrap{max-width:1100px;margin:0 auto;padding:12px 16px}
+.site-header{position:sticky;top:0;z-index:60;background:linear-gradient(0deg,rgba(0,0,0,.18),rgba(0,0,0,.18)),var(--bg);border-bottom:1px solid rgba(255,255,255,0.04)}
+.header-inner{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.logo{display:flex;align-items:center;gap:10px;cursor:pointer;user-select:none}
+.badge{width:44px;height:44px;border-radius:12px;display:grid;place-items:center;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#012014;font-weight:900}
+.brand{font-weight:800;font-size:18px}
+.nav{display:flex;gap:12px;align-items:center}
+.nav a{padding:8px 10px;border-radius:8px;display:inline-block}
+.controls{display:flex;gap:8px;align-items:center}
+
+/* hero slider */
+.hero{max-width:1100px;margin:16px auto;padding:0 16px}
+.hero-slider{position:relative;height:260px;border-radius:12px;overflow:hidden}
+.slide{position:absolute;inset:0;background-size:cover;background-position:center;display:flex;align-items:center;padding:18px;opacity:0;transition:opacity .45s ease}
+.slide.active{opacity:1}
+.slide-content{background:rgba(2,6,23,0.45);padding:14px;border-radius:10px;max-width:520px}
+.slide-content h1{margin:0 0 6px;font-size:22px}
+.cta{display:inline-block;margin-top:8px;padding:10px 12px;border-radius:10px;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#042316;font-weight:800}
+
+/* controls & sections */
+.section{padding:18px 0}
+.section-wrap{max-width:1100px;margin:0 auto;padding:0 16px}
+.controls-row{display:flex;gap:8px;align-items:center;margin:10px 0}
+.controls-row input, .controls-row select{padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.06);background:transparent;color:var(--text)}
+
+/* grid: always 2 columns */
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+@media(max-width:420px){ .grid{grid-template-columns:repeat(2,minmax(0,1fr))} }
+
+.card{background:var(--card);border-radius:12px;padding:10px;display:flex;flex-direction:column;min-height:300px;box-shadow:0 10px 30px rgba(0,0,0,.4)}
+.thumb{height:160px;border-radius:8px;overflow:hidden;background:#07101a;display:grid;place-items:center}
+.thumb img{width:100%;height:100%;object-fit:cover}
+.info{padding:8px;display:flex;flex-direction:column;gap:8px;flex:1}
+.titleRow{display:flex;justify-content:space-between;align-items:center}
+.price{font-weight:800}
+.actions{display:flex;gap:8px;margin-top:auto}
+.btn{padding:10px;border-radius:8px;background:transparent;border:1px solid rgba(255,255,255,0.06);color:var(--text);cursor:pointer}
+.btn.primary{background:linear-gradient(135deg,var(--accent),var(--accent2));border:0;color:#042316;font-weight:800}
+
+/* modal */
+.modal{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(2,6,23,.6);padding:16px;z-index:90}
+.modal.open{display:flex}
+.modal-panel{background:var(--card);border-radius:12px;border:1px solid rgba(255,255,255,0.04);overflow:hidden;max-width:920px;min-width:320px}
+.modal-panel.small{max-width:520px;padding:0}
+.modal-head{display:flex;justify-content:space-between;align-items:center;padding:12px 14px;border-bottom:1px solid rgba(255,255,255,0.04)}
+.modal-body{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:14px}
+@media(max-width:900px){ .modal-body{grid-template-columns:1fr} }
+.modal-gallery{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+.modal-gallery img{width:100%;border-radius:8px;object-fit:cover}
+.modal-info{padding:6px}
+
+/* booking small-body */
+.small-body label{display:block;margin:8px 0}
+
+/* admin */
+.admin-grid{display:grid;gap:12px}
+.admin-card{background:rgba(255,255,255,0.02);padding:10px;border-radius:10px}
+.admin-actions{display:flex;gap:8px;flex-wrap:wrap}
+
+/* helpers */
+.muted{color:var(--muted)}
+.mutedTiny{color:var(--muted);font-size:13px}
+.contact-row{display:flex;gap:8px}
+.site-footer{padding:18px 0;margin-top:20px}
+#year{font-weight:700}
+html,body{max-width:100%;overflow-x:hidden}
+@media(max-width:520px){ .hero-slider{height:180px} .slide-content h1{font-size:18px} }
+</style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="wrap header-inner">
+      <div class="logo" id="logo" title="Click 5× for Admin">
+        <div class="badge">S</div>
+        <div class="brand">Sneakylinks</div>
+      </div>
+      <nav class="nav" role="navigation" aria-label="Main">
+        <a href="#home">Home</a>
+        <a href="#shop">Shop</a>
+        <a href="#about">About</a>
+        <a href="#contact">Contact</a>
+        <a href="#request" id="navRequest">Request</a>
+      </nav>
+      <div class="controls">
+        <button id="themeToggle" class="btn">Toggle</button>
+      </div>
+    </div>
+  </header>
+
+  <main id="home">
+    <!-- HERO SLIDER -->
+    <section class="hero" id="hero">
+      <div class="hero-slider" id="heroSlider">
+        <div class="slide" id="slide1" style="background-image:url('data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%221600%22%20height%3D%22700%22%3E%3Crect%20width%3D%22100%25%22%20height%3D%22100%25%22%20fill%3D%22%230f172a%22/%3E%3Ctext%20x%3D%2250%25%22%20y%3D%2250%25%22%20fill%3D%22%23ffffff%22%20font-family%3D%22Arial%2C%20Helvetica%2C%20sans-serif%22%20font-size%3D%2272%22%20text-anchor%3D%22middle%22%20dominant-baseline%3D%22middle%22%3ELaptop%20%E2%80%94%20Sneakylinks%3C/text%3E%3C/svg%3E')">
+          <div class="slide-content"><h1>Shop Laptops, Phones & Book Hostels</h1><p class="muted">Fast replies on WhatsApp • Secure bookings</p><a href="#shop" class="cta">Shop Now</a></div>
+        </div>
+        <div class="slide" id="slide2" style="background-image:url('data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%221600%22%20height%3D%22700%22%3E%3Crect%20width%3D%22100%25%22%20height%3D%22100%25%22%20fill%3D%22%23134e4a%22/%3E%3Ctext%20x%3D%2250%25%22%20y%3D%2250%25%22%20fill%3D%22%23ffffff%22%20font-family%3D%22Arial%2C%20Helvetica%2C%20sans-serif%22%20font-size%3D%2272%22%20text-anchor%3D%22middle%22%20dominant-baseline%3D%22middle%22%3EPhone%20%E2%80%94%20Sneakylinks%3C/text%3E%3C/svg%3E')">
+          <div class="slide-content"><h1>Quality Devices, Fair Prices</h1><p class="muted">Reliable — Vetted — Ready to Ship</p><a href="#shop" class="cta">Browse Products</a></div>
+        </div>
+        <div class="slide" id="slide3" style="background-image:url('data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%221600%22%20height%3D%22700%22%3E%3Crect%20width%3D%22100%25%22%20height%3D%22100%25%22%20fill%3D%22%231e293b%22/%3E%3Ctext%20x%3D%2250%25%22%20y%3D%2250%25%22%20fill%3D%22%23ffffff%22%20font-family%3D%22Arial%2C%20Helvetica%2C%20sans-serif%22%20font-size%3D%2272%22%20text-anchor%3D%22middle%22%20dominant-baseline%3D%22middle%22%3EHostel%20%E2%80%94%20Sneakylinks%3C/text%3E%3C/svg%3E')">
+          <div class="slide-content"><h1>Hostel Bookings Made Easy</h1><p class="muted">Reserve rooms with a tap — pay on pickup</p><a href="#request" class="cta">Book a Room</a></div>
+        </div>
+      </div>
+      <div class="slider-controls" style="text-align:center;margin-top:8px">
+        <button id="prevSlide" class="btn">‹</button>
+        <button id="nextSlide" class="btn">›</button>
+      </div>
+    </section>
+
+    <!-- SHOP -->
+    <section id="shop" class="section">
+      <div class="section-wrap">
+        <h2>Shop</h2>
+        <p class="muted">2 products per row on all devices. Tap a product to view details or book.</p>
+        <div class="controls-row">
+          <input id="search" placeholder="Search products or specs..." aria-label="Search products" />
+          <select id="categoryFilter" aria-label="Category filter"><option value="all">All</option><option value="laptops">Laptops</option><option value="phones">Phones</option><option value="accessories">Other Devices</option><option value="hostels">Hostels</option></select>
+          <button id="openRequestBtn" class="btn primary">Request Product</button>
+        </div>
+
+        <div id="productGrid" class="grid" role="list"></div>
+      </div>
+    </section>
+
+    <!-- ABOUT -->
+    <section id="about" class="section">
+      <div class="section-wrap">
+        <h2>About Sneakylinks</h2>
+        <p class="muted">Sneakylinks sells quality laptops, phones and other devices — and offers hostel booking services. We respond quickly on WhatsApp and handle bookings securely.</p>
+      </div>
+    </section>
+
+    <!-- REQUEST FORM -->
+    <section id="request" class="section">
+      <div class="section-wrap">
+        <h2>Request a Product</h2>
+        <p class="muted">Can't find what you need? Send us a request and we'll source it.</p>
+        <div class="request-card">
+          <label>Name <input id="reqName" /></label>
+          <label>Contact <input id="reqContact" /></label>
+          <label>Details <textarea id="reqDetails"></textarea></label>
+          <button id="reqSend" class="btn primary">Send Request via WhatsApp</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- CONTACT -->
+    <section id="contact" class="section">
+      <div class="section-wrap">
+        <h2>Contact</h2>
+        <p class="muted">Chat with us on WhatsApp:</p>
+        <div class="contact-row">
+          <a class="btn" href="https://wa.me/233597053192" target="_blank">0597053192</a>
+          <a class="btn" href="https://wa.me/233596012229" target="_blank">0596012229</a>
+          <a class="btn" href="https://wa.me/233594438054" target="_blank">0594438054</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- VIEW MODAL -->
+  <div id="viewModal" class="modal" aria-hidden="true">
+    <div class="modal-panel" role="dialog" aria-modal="true">
+      <div class="modal-head"><strong id="viewTitle">Product</strong><button class="close" id="viewClose" aria-label="Close">&times;</button></div>
+      <div class="modal-body">
+        <div class="modal-gallery" id="viewGallery" aria-hidden="false"></div>
+        <div class="modal-info">
+          <div class="price" id="viewPrice"></div>
+          <div class="cat mutedTiny" id="viewCat"></div>
+          <div id="viewSpecs" class="muted"></div>
+          <div style="margin-top:12px"><button id="openBookFromView" class="btn primary">Book</button></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BOOKING MODAL (centered, NO images inside) -->
+  <div id="bookModal" class="modal" aria-hidden="true">
+    <div class="modal-panel small" role="dialog" aria-modal="true">
+      <div class="modal-head"><strong>Book Product</strong><button class="close" id="bookClose" aria-label="Close">&times;</button></div>
+      <div class="modal-body small-body">
+        <label>Name <input id="bkName" /></label>
+        <label>Location <input id="bkLocation" /></label>
+        <label>Contact <input id="bkContact" /></label>
+        <label>Product <input id="bkProduct" readonly /></label>
+        <label>Send to <select id="bkNumber"><option value="0597053192">0597053192</option><option value="0596012229">0596012229</option><option value="0594438054">0594438054</option><option value="all">All</option></select></label>
+        <div style="margin-top:8px;"><button id="bkSend" class="btn primary">Send Booking</button></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ADMIN MODAL -->
+  <div id="adminModal" class="modal" aria-hidden="true">
+    <div class="modal-panel admin-panel" role="dialog" aria-modal="true">
+      <div class="modal-head"><strong>Admin Panel</strong><button class="close" id="adminClose" aria-label="Close">&times;</button></div>
+      <div class="modal-body admin-body">
+        <div class="admin-actions">
+          <button id="addProd" class="btn">Add Product</button>
+          <button id="saveAll" class="btn primary">Save All</button>
+          <button id="exportBtn" class="btn">Export</button>
+          <button id="importBtn" class="btn">Import</button>
+          <input type="file" id="importFile" accept="application/json" style="display:none" />
+        </div>
+        <div id="adminGrid" class="admin-grid"></div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="site-footer"><div class="wrap"><div>© <span id="year"></span> Sneakylinks</div><div class="mutedTiny">Orders via WhatsApp • Admin edits in-browser</div></div></footer>
+
+<script>
+// Embedded single-file JS for Sneakylinks
+const HERO_IMAGES = ['data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%221600%22%20height%3D%22700%22%3E%3Crect%20width%3D%22100%25%22%20height%3D%22100%25%22%20fill%3D%22%230f172a%22/%3E%3Ctext%20x%3D%2250%25%22%20y%3D%2250%25%22%20fill%3D%22%23ffffff%22%20font-family%3D%22Arial%2C%20Helvetica%2C%20sans-serif%22%20font-size%3D%2272%22%20text-anchor%3D%22middle%22%20dominant-baseline%3D%22middle%22%3ELaptop%20%E2%80%94%20Sneakylinks%3C/text%3E%3C/svg%3E','data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%221600%22%20height%3D%22700%22%3E%3Crect%20width%3D%22100%25%22%20height%3D%22100%25%22%20fill%3D%22%23134e4a%22/%3E%3Ctext%20x%3D%2250%25%22%20y%3D%2250%25%22%20fill%3D%22%23ffffff%22%20font-family%3D%22Arial%2C%20Helvetica%2C%20sans-serif%22%20font-size%3D%2272%22%20text-anchor%3D%22middle%22%20dominant-baseline%3D%22middle%22%3EPhone%20%E2%80%94%20Sneakylinks%3C/text%3E%3C/svg%3E','data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%221600%22%20height%3D%22700%22%3E%3Crect%20width%3D%22100%25%22%20height%3D%22100%25%22%20fill%3D%22%231e293b%22/%3E%3Ctext%20x%3D%2250%25%22%20y%3D%2250%25%22%20fill%3D%22%23ffffff%22%20font-family%3D%22Arial%2C%20Helvetica%2C%20sans-serif%22%20font-size%3D%2272%22%20text-anchor%3D%22middle%22%20dominant-baseline%3D%22middle%22%3EHostel%20%E2%80%94%20Sneakylinks%3C/text%3E%3C/svg%3E'];
+const PROD_PLACEHOLDER = 'data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%22800%22%20height%3D%22600%22%3E%3Crect%20width%3D%22100%25%22%20height%3D%22100%25%22%20fill%3D%22%230b1220%22/%3E%3Ctext%20x%3D%2250%25%22%20y%3D%2250%25%22%20fill%3D%22%23cbd5e1%22%20font-family%3D%22Arial%2C%20Helvetica%2C%20sans-serif%22%20font-size%3D%2272%22%20text-anchor%3D%22middle%22%20dominant-baseline%3D%22middle%22%3EProduct%20Image%3C/text%3E%3C/svg%3E';
+const STORAGE_KEY = 'sneaky.products.v3';
+const ADMIN_PASS = 'admin123';
+const WHATSAPP_NUMS = ['0597053192','0596012229','0594438054'];
+
+// Build default products (30) with sample placeholder image (data URI)
+let products = Array.from({length:30}).map((_,i)=>({ id: crypto.randomUUID(), title:`Placeholder Product ${i+1}`, price:`₵ ${(i+1)*1000}`, category:['laptops','phones','accessories','hostels'][i%4], specs:`Specs for product ${i+1}`, images: [PROD_PLACEHOLDER] }));
+
+// Load saved products if present
+try{ const raw = localStorage.getItem(STORAGE_KEY); if(raw){ const parsed = JSON.parse(raw); if(Array.isArray(parsed)) products = parsed; } }catch(e){ console.error('load products', e); }
+
+// Element refs
+const productGrid = document.getElementById('productGrid');
+const searchInput = document.getElementById('search');
+const categoryFilter = document.getElementById('categoryFilter');
+const viewModal = document.getElementById('viewModal');
+const viewTitle = document.getElementById('viewTitle');
+const viewGallery = document.getElementById('viewGallery');
+const viewPrice = document.getElementById('viewPrice');
+const viewCat = document.getElementById('viewCat');
+const viewSpecs = document.getElementById('viewSpecs');
+const viewClose = document.getElementById('viewClose');
+const openBookFromView = document.getElementById('openBookFromView');
+const bookModal = document.getElementById('bookModal');
+const bkName = document.getElementById('bkName');
+const bkLocation = document.getElementById('bkLocation');
+const bkContact = document.getElementById('bkContact');
+const bkProduct = document.getElementById('bkProduct');
+const bkNumber = document.getElementById('bkNumber');
+const bkSend = document.getElementById('bkSend');
+const bookClose = document.getElementById('bookClose');
+const reqName = document.getElementById('reqName');
+const reqContact = document.getElementById('reqContact');
+const reqDetails = document.getElementById('reqDetails');
+const reqSend = document.getElementById('reqSend');
+const openRequestBtn = document.getElementById('openRequestBtn');
+const adminModal = document.getElementById('adminModal');
+const adminClose = document.getElementById('adminClose');
+const adminGrid = document.getElementById('adminGrid');
+const addProdBtn = document.getElementById('addProd');
+const saveAllBtn = document.getElementById('saveAll');
+const exportBtn = document.getElementById('exportBtn');
+const importBtn = document.getElementById('importBtn');
+const importFile = document.getElementById('importFile');
+const logo = document.getElementById('logo');
+const themeToggle = document.getElementById('themeToggle');
+document.getElementById('year') && (document.getElementById('year').textContent = new Date().getFullYear());
+
+// Utilities
+function esc(s){ return String(s||''); }
+function stripPhone(num){ const d = (num||'').replace(/\\D/g,''); if(d.length===10 && d[0]==='0') return '233'+d.slice(1); if(d.length===9) return '233'+d; return d; }
+function openWA(num,msg){ const to = stripPhone(num); const url = `https://wa.me/${to}?text=${encodeURIComponent(msg)}`; window.open(url,'_blank'); }
+
+// Render grid
+function productCardHTML(p){ const img = (p.images && p.images[0]) ? `<img src="${p.images[0]}" alt="${esc(p.title)}">` : '<div class="mutedTiny">No image</div>'; return `<div class="card" data-id="${p.id}"><div class="thumb">${img}</div><div class="info"><div class="titleRow"><div style="font-weight:700">${esc(p.title)}</div><div class="price">${esc(p.price)}</div></div><div class="cat mutedTiny">${esc(p.category)}</div><div class="actions"><button class="btn viewBtn">View</button><button class="btn primary bookBtn">Book</button></div></div></div>`; }
+function renderGrid(){ const q = (searchInput && searchInput.value || '').toLowerCase(); const cat = (categoryFilter && categoryFilter.value) || 'all'; const list = products.filter(p=>{ if(cat!=='all' && p.category !== cat) return false; if(!q) return true; return p.title.toLowerCase().includes(q) || p.specs.toLowerCase().includes(q); }); productGrid.innerHTML = list.map(productCardHTML).join(''); }
+searchInput && searchInput.addEventListener('input', renderGrid);
+categoryFilter && categoryFilter.addEventListener('change', renderGrid);
+
+// Delegation click handling
+productGrid.addEventListener('click', (e)=>{ const card = e.target.closest('.card'); if(!card) return; const id = card.dataset.id; const p = products.find(x=>x.id===id); if(!p) return; if(e.target.closest('.viewBtn')) openView(p); if(e.target.closest('.bookBtn')) openBook(p); });
+
+let currentProduct = null;
+function openView(p){ currentProduct = p; viewTitle.textContent = p.title; viewPrice.textContent = p.price; viewCat.textContent = p.category; viewSpecs.textContent = p.specs; viewGallery.innerHTML = (p.images||[]).slice(0,5).map(s=>`<img src="${s}" alt="${esc(p.title)}">`).join('') || '<div class="mutedTiny">No images uploaded</div>'; viewModal.classList.add('open'); }
+viewClose && viewClose.addEventListener('click', ()=> viewModal.classList.remove('open'));
+
+// BOOKING (no images in booking)
+function openBook(p){ currentProduct = p; bkProduct.value = `${p.title}`; bkName.value = ''; bkLocation.value=''; bkContact.value=''; bkNumber.value = WHATSAPP_NUMS[0]; bookModal.classList.add('open'); }
+bookClose && bookClose.addEventListener('click', ()=> bookModal.classList.remove('open'));
+
+// Send booking - text only (Name, Location, Contact, Product, Price, Specs)
+bkSend && bkSend.addEventListener('click', ()=>{ const name = (bkName.value||'').trim(); const loc = (bkLocation.value||'').trim(); const contact = (bkContact.value||'').trim(); if(!name || !contact){ alert('Please enter your name and contact'); return; } const msg = `Order Request:\\nName: ${name}\\nLocation: ${loc}\\nContact: ${contact}\\nProduct: ${currentProduct.title}\\nPrice: ${currentProduct.price}\\nSpecs: ${currentProduct.specs}`; const target = bkNumber.value; if(target==='all'){ WHATSAPP_NUMS.forEach((n,i)=> setTimeout(()=> openWA(n,msg), i*350)); } else openWA(target,msg); bookModal.classList.remove('open'); });
+
+// Request - text only to all numbers
+reqSend && reqSend.addEventListener('click', ()=>{ const name = (reqName.value||'').trim(); const contact = (reqContact.value||'').trim(); const details = (reqDetails.value||'').trim(); if(!name || !contact || !details){ alert('Please fill all fields'); return; } const msg = `Product Request:\\nName: ${name}\\nContact: ${contact}\\nDetails: ${details}`; WHATSAPP_NUMS.forEach((n,i)=> setTimeout(()=> openWA(n,msg), i*350)); alert('Request sent'); reqName.value=''; reqContact.value=''; reqDetails.value=''; });
+
+// Admin html
+function adminCardHTML(p, idx){ return `<div class=\"admin-card\" data-id=\"${p.id}\"><div style=\"display:flex;gap:8px;align-items:flex-start\"><div style=\"width:140px\"><div class=\"mutedTiny\">Images (2-5)</div><input type=\"file\" accept=\"image/*\" multiple data-files /><div class=\"preview\">${(p.images||[]).map((s,i)=>`<div style=\"position:relative;margin-top:6px\"><img src=\"${s}\" style=\"width:100%;height:60px;object-fit:cover;border-radius:6px\"><button data-del=\"${i}\" class=\"btn\" style=\"position:absolute;top:6px;right:6px;padding:6px\">✕</button></div>`).join('')}</div></div><div style=\"flex:1\"><label>Title<input data-field=\"title\" value=\"${esc(p.title)}\"></label><div style=\"display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px\"><label>Price<input data-field=\"price\" value=\"${esc(p.price)}\"></label><label>Category<select data-field=\"category\">${['laptops','phones','accessories','hostels'].map(c=>`<option ${p.category===c?'selected':''}>${c}</option>`).join('')}</select></label></div><label style=\"margin-top:8px\">Specs<textarea data-field=\"specs\">${esc(p.specs||'')}</textarea></label></div></div></div>`; }
+function renderAdmin(){ adminGrid.innerHTML = products.map((p,i)=> adminCardHTML(p,i)).join(''); }
+
+// Admin file handling (delegation)
+adminGrid && adminGrid.addEventListener('change', async (e)=>{ const el = e.target; if(el && el.type==='file'){ const card = el.closest('.admin-card'); if(!card) return; const id = card.dataset.id; const p = products.find(x=>x.id===id); if(!p) return; const files = Array.from(el.files).slice(0,5); try{ const imgs = await Promise.all(files.map(f=> new Promise(res=>{ const r=new FileReader(); r.onload = ()=> res(r.result); r.readAsDataURL(f); }))); p.images = imgs; renderAdmin(); renderGrid(); }catch(err){ console.error(err); alert('Error reading images'); } } if(el && el.dataset && typeof el.dataset.del !== 'undefined'){ const card = el.closest('.admin-card'); if(!card) return; const id = card.dataset.id; const p = products.find(x=>x.id===id); if(!p) return; const idx = Number(el.dataset.del); if(!isNaN(idx)){ p.images.splice(idx,1); renderAdmin(); renderGrid(); } } });
+adminGrid && adminGrid.addEventListener('click', (e)=>{ const btn = e.target.closest('button[data-del]'); if(btn){ const card = btn.closest('.admin-card'); if(!card) return; const id = card.dataset.id; const p = products.find(x=>x.id===id); if(!p) return; const idx = Number(btn.dataset.del); if(!isNaN(idx)){ p.images.splice(idx,1); renderAdmin(); renderGrid(); } } });
+adminGrid && adminGrid.addEventListener('input', (e)=>{ const el = e.target; const field = el.dataset && el.dataset.field; if(!field) return; const card = el.closest('.admin-card'); if(!card) return; const id = card.dataset.id; const p = products.find(x=>x.id===id); if(!p) return; p[field] = el.value; renderGrid(); });
+
+addProdBtn && addProdBtn.addEventListener('click', ()=>{ products.unshift({ id: crypto.randomUUID(), title:'New Product', price:'₵ —', category:'laptops', specs:'', images:[PROD_PLACEHOLDER] }); renderAdmin(); renderGrid(); adminModal.classList.add('open'); });
+saveAllBtn && saveAllBtn.addEventListener('click', ()=>{ try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(products)); alert('Saved to browser (localStorage)'); }catch(e){ alert('Save failed'); } });
+exportBtn && exportBtn.addEventListener('click', ()=>{ const blob = new Blob([JSON.stringify(products,null,2)],{type:'application/json'}); const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = 'sneaky-products.json'; a.click(); URL.revokeObjectURL(url); });
+importBtn && importBtn.addEventListener('click', ()=> importFile.click()); importFile && importFile.addEventListener('change', (e)=>{ const f = e.target.files && e.target.files[0]; if(!f) return; const r = new FileReader(); r.onload = ()=> { try{ const parsed = JSON.parse(r.result||'[]'); if(!Array.isArray(parsed)) throw new Error('invalid'); products = parsed; localStorage.setItem(STORAGE_KEY, JSON.stringify(products)); renderAdmin(); renderGrid(); alert('Imported'); }catch(err){ alert('Import failed'); } }; r.readAsText(f); });
+
+// Admin open via logo x5, fixed password ADMIN_PASS
+let clicks=0, timer=null;
+logo && logo.addEventListener('click', ()=>{ clicks++; clearTimeout(timer); timer = setTimeout(()=> clicks=0, 1000); if(clicks>=5){ clicks=0; const pass = prompt('Enter admin password:'); if(pass === ADMIN_PASS){ adminModal.classList.add('open'); renderAdmin(); } else alert('Wrong password'); } });
+adminClose && adminClose.addEventListener('click', ()=> adminModal.classList.remove('open'));
+
+// theme toggle
+themeToggle && themeToggle.addEventListener('click', ()=>{ const cur = localStorage.getItem('sneaky.mode') || 'dark'; localStorage.setItem('sneaky.mode', cur==='dark'?'light':'dark'); applyTheme(); });
+function applyTheme(){ const m = localStorage.getItem('sneaky.mode') || 'dark'; document.documentElement.classList.toggle('light', m==='light'); } applyTheme();
+
+// hero slider behavior
+const slides = document.querySelectorAll('.hero-slider .slide'); let slideIndex = 0;
+function showSlide(i){ slides.forEach((s,idx)=> s.classList.toggle('active', idx===i)); }
+document.getElementById('prevSlide') && document.getElementById('prevSlide').addEventListener('click', ()=>{ slideIndex = (slideIndex-1+slides.length)%slides.length; showSlide(slideIndex); });
+document.getElementById('nextSlide') && document.getElementById('nextSlide').addEventListener('click', ()=>{ slideIndex = (slideIndex+1)%slides.length; showSlide(slideIndex); });
+setInterval(()=>{ slideIndex = (slideIndex+1)%slides.length; showSlide(slideIndex); }, 6000);
+showSlide(0);
+
+// close modals on backdrop/esc
+document.querySelectorAll('.modal').forEach(m=> m.addEventListener('click', (e)=>{ if(e.target===m) m.classList.remove('open'); }));
+document.addEventListener('keydown', (e)=>{ if(e.key==='Escape') document.querySelectorAll('.modal.open').forEach(m=>m.classList.remove('open')); });
+
+// initial render
+renderGrid(); renderAdmin();
+</script>
+</body>
+</html>
